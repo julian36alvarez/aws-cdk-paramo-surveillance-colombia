@@ -1,0 +1,11 @@
+# conda env create --file environment.yml
+name: aws_cdk_paramo
+channels:
+  - anaconda
+  - conda-forge
+  - defaults
+dependencies:
+  - pip
+  - python=3.10.9
+  - pip:
+    
