@@ -125,5 +125,12 @@ cd aws && cdk bootstrap aws://<account_id>/<region>
 ```bash
 python3 main.py
 ```
+You should see something like this:
 
+![image](https://github.com/julian36alvarez/aws-cdk-paramo-surveillance-colombia/assets/31891276/1e73238e-976d-413b-b82d-76ab791f4907)
 
+please confirm the changes (y/n): y
+
+then you will see the outputs of the stack, the resources created and the data loaded in the S3 bucket.
+
+![image](https://github.com/julian36alvarez/aws-cdk-paramo-surveillance-colombia/assets/31891276/b9fccdd0-9aed-42dd-9ecd-0321af364c76)
