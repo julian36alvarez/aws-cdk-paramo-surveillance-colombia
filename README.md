@@ -117,11 +117,13 @@ pip install -r requirements.txt
 2. Execute bootstrap command to create the stack: This command will create the stack in the AWS account that you have configured in the AWS CLI, only execute this command once.
 
 ```bash
-cd cli/aws
+cd aws && cdk bootstrap aws://<account_id>/<region>
 ```
 
+3. Execute the deploy command to create the stack: This command will create the stack in the AWS account that you have configured in the AWS CLI, please execute this command in the root of the project.
 
 ```bash
-cdk bootstrap aws://<account_id>/<region>
+python3 main.py
 ```
+
 

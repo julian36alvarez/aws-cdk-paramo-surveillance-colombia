@@ -58,7 +58,7 @@ class SageMakerStack(Stack):
             "UnetModel",
             execution_role_arn=role_arn, 
             primary_container=primary_container,
-            
+            model_name="UnetModel",
         )
 '''vpc_config=sagemaker.CfnModel.VpcConfigProperty(
                 security_group_ids=[security_group_id],
