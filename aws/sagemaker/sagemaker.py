@@ -1,72 +1,42 @@
 import json
 import subprocess
-from aws_cdk import (
-    Stack,
-    aws_sagemaker as sagemaker,
-    Fn,
-)
-from constructs import Construct
+from termcolor import colored
+from sagemaker import get_execution_role
+from sagemaker.tensorflow import TensorFlowModel
+from sagemaker import Session
+from botocore.exceptions import ClientError
 
-class SageMakerStack(Stack):
+def deploy_sagemaker(arnRole, bucket_name):
+        # Get the SageMaker execution role
+        # Extract the role name from the role ARN
 
-    def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-        super().__init__(scope, construct_id, **kwargs)
+        role_name = arnRole.split('/')[-1]
+        sagemaker_session = Session()
+        s3_model_location = "s3://{}/models/model.tar.gz".format(bucket_name)
 
-        bucket_name = Fn.import_value('BucketName')
-        role_arn = Fn.import_value('RoleArn')
-        security_group_id = Fn.import_value('SecurityGroupId')
-        subnet_id = Fn.import_value('SubNetId')
+        print(colored(f'Region: {sagemaker_session.boto_region_name}', 'blue'))
+        print(colored(f'Model location: {s3_model_location}', 'blue'))
+        print(colored(f'Role name: {role_name}', 'blue'))
 
-        sagemaker.CfnNotebookInstanceLifecycleConfig(
-            self, "LifecycleConfig",
-            notebook_instance_lifecycle_config_name="MyLifecycleConfig"
-        )
+        print(colored('🤞 Deploying model to SageMaker...', 'green'))
 
-        # SageMaker Notebook Instance
-        self.notebook = sagemaker.CfnNotebookInstance(
-            self, "Notebook",
-            instance_type="ml.t3.medium", # ml.g4dn.2xlarge ml.t3.medium
-            role_arn=role_arn,
-            direct_internet_access="Enabled",
-            subnet_id=subnet_id,
-            security_group_ids=[security_group_id], 
-            notebook_instance_name="ParamoNotebook",
-            lifecycle_config_name="MyLifecycleConfig",
-            default_code_repository="https://github.com/julian36alvarez/unet-paramo-surveillance-colombia"
-        )
+        model = TensorFlowModel(model_data=s3_model_location, role=role_name, framework_version='2.14', sagemaker_session=sagemaker_session)
+        instance_type = 'ml.g4dn.xlarge'
+        model.deploy(initial_instance_count=1, instance_type=instance_type)
+        print("\n\n")
+        print(colored(f'ModelName {model.name}', 'green'))
+        print(colored('🎉 Model deployed successfully!', 'green'))
 
-        primary_container = sagemaker.CfnModel.ContainerDefinitionProperty(
-            container_hostname="MyContainer",
-            image="763104351884.dkr.ecr.us-east-2.amazonaws.com/tensorflow-inference:2.14.1-gpu",
-            image_config=sagemaker.CfnModel.ImageConfigProperty(
-                repository_access_mode="Platform",
-            ),
-            inference_specification_name="inferenceSpecificationName",
-            mode="SingleModel",
-            model_data_source=sagemaker.CfnModel.ModelDataSourceProperty(
-                s3_data_source=sagemaker.CfnModel.S3DataSourceProperty(
-                    compression_type="Gzip",
-                    s3_data_type="S3Prefix",
-                    s3_uri=f"s3://{bucket_name}/models/model.tar.gz"
-                )
-            ),
-        )
 
-        # SageMaker Model
-        self.model = sagemaker.CfnModel(
-            self, 
-            "UnetModel",
-            execution_role_arn=role_arn, 
-            primary_container=primary_container,
-            model_name="UnetModel",
-        )
-'''vpc_config=sagemaker.CfnModel.VpcConfigProperty(
-                security_group_ids=[security_group_id],
-                subnets=[subnet_id]
-            )'''
-        
-        
 
-       
-        
-
+def delete_sagemaker_endpoint(model_name):
+    print(colored('🗑️ Deleting SageMaker endpoint...', 'green'))
+    sagemaker_session = Session()
+    try:
+        sagemaker_session.delete_endpoint(model_name)
+        print(colored('🎉 Endpoint deleted successfully!', 'green'))
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'ValidationException':
+            print(colored('⚠️ The endpoint does not exist or has already been deleted.', 'yellow'))
+        else:
+            raise

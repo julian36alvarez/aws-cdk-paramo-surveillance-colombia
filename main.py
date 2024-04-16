@@ -1,20 +1,18 @@
-import json
 import subprocess
+from termcolor import colored
 from aws.buckets.load_files import upload_folder
+from aws.sagemaker.sagemaker import deploy_sagemaker
+from aws.cloudformation.cloudformation import get_stack_outputs
 
-# S3
+print(colored('🌱♻️ Protecting the moors is protecting your home. 🌿', 'yellow'))
+
 subprocess.run(["cdk", "deploy" , "AwsS3"])
-stack = subprocess.check_output(["aws", "cloudformation", "describe-stacks", "--stack-name", "AwsS3"])
-stack = json.loads(stack)
-bucket_name = next(output["OutputValue"] for output in stack["Stacks"][0]["Outputs"] if output["OutputKey"] == "BucketName")
 
-# Upload files to S3
+bucket_name, arnRole = get_stack_outputs("AwsS3")
+
 upload_folder('unet-paramo-insights', bucket_name)
-
-# VPC
 subprocess.run(["cdk", "deploy" , "VpcIAMStack"])
 
-
 # SageMaker
-subprocess.run(["cdk", "deploy", "SageMakerStack"])
+deploy_sagemaker(arnRole, bucket_name)
 
