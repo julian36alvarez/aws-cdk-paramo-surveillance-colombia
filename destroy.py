@@ -1,13 +1,14 @@
 import subprocess
 from termcolor import colored
-from aws.sagemaker.sagemaker import delete_sagemaker_endpoint
+from aws.sagemaker.sagemaker import delete_sagemaker_endpoint , delete_sagemaker_endpoint_config, delete_sagemaker_model
 
 
 print(colored('🌱♻️ Protecting the moors is protecting your home. 🌿', 'green'))
 
-#solicitar a el usuario el nombre del modelo a eliminar
-model_name = input(colored("☢️ Enter the model name: ", 'yellow'))
-delete_sagemaker_endpoint(model_name)
+
+delete_sagemaker_endpoint()
+delete_sagemaker_endpoint_config()
+delete_sagemaker_model()
 
 subprocess.run(["cdk", "destroy" , "--all"])
 

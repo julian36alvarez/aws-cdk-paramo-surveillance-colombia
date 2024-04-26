@@ -9,6 +9,7 @@ AWS-CDK
 ## Prerequisites
 
 - [AWS Account](https://aws.amazon.com/)
+- [Node Version Manager (NVM) >= 18.0.0 (required by AWS CDK)](https://github.com/nvm-sh/nvm)
 - [Anaconda](https://www.anaconda.com/download/) >=4.x
 - Optional [Mamba](https://mamba.readthedocs.io/en/latest/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
