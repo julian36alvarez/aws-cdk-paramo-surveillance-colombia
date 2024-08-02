@@ -1,3 +1,4 @@
+import time
 import subprocess
 from termcolor import colored
 from aws.buckets.load_files import upload_folder
@@ -17,18 +18,18 @@ def main():
     outputs = get_stack_outputs("AwsS3", ["BucketName", "BucketInputOutputName"])
     bucket_name = outputs["BucketName"]
     bucket_name_input_output = outputs["BucketInputOutputName"]
-    upload_folder('unet-paramo-insights/geojson', bucket_name_input_output)
+    upload_folder('public/paramos-delimitados', bucket_name_input_output)
     upload_folder('unet-paramo-insights', bucket_name)
-
     deploy_stack("IamStack")
     deploy_stack("VpcStack")
     deploy_stack("NoteBookStack")
-
     arnRole_outputs = get_stack_outputs("IamStack", ["RoleArn"])
     arnRole = arnRole_outputs["RoleArn"]
     deploy_sagemaker(arnRole, bucket_name)
-
     deploy_stack("InstanceECS")
 
 if __name__ == "__main__":
+    start_time = time.time()
     main()
+    end_time = time.time()
+    print(f"Total execution time: {(end_time - start_time) / 60} minutes")

@@ -182,6 +182,6 @@ models/
 *.hdf5
 
 data/3_output/
-
+public/paramos-delimitados/
 # visual studio code 
 .vscode/

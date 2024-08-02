@@ -6,6 +6,9 @@ Version: 0.1.0
 
 AWS-CDK
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=julian36alvarez_aws-cdk-paramo-surveillance-colombia&metric=alert_status)](https://sonarcloud.io/dashboard?id=julian36alvarez_aws-cdk-paramo-surveillance-colombia)
+
+
 ## Prerequisites
 
 - [AWS Account](https://aws.amazon.com/)
@@ -14,7 +17,19 @@ AWS-CDK
 - Optional [Mamba](https://mamba.readthedocs.io/en/latest/)
 - [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 
+## AWS Arquitecture
+
+The AWS architecture is described in the following diagram:
+
+![image](img/AWS-CLI.png)
+
 ## AWS CLI
+
+The stacks are created using the AWS CDK, the figure shows the resources created in the AWS account.
+
+![image](img/cliaws.png)
+
+
 
 Please check your AWS CLI version:
     
@@ -68,7 +83,7 @@ aws --version
      ```bash
     aws configure list
     ```
-Nice job! You have created an IAM user and configured the AWS CLI.
+You have created an IAM user and configured the AWS CLI.
 
 ## Create environment
 
@@ -88,14 +103,31 @@ activate aws_cdk_paramo
 
 ## Project organization
 
-    aws_cdk_paramo
-        ├── data
-        │   ├── processed      <- The final, canonical data sets for modeling.
-        │   └── raw            <- The original, immutable data dump.
+    aws_cdk_paramo-surveillance-colombia
+        ├── aws                <- AWS CDK project.
+        │   ├── buckets        <- S3 bucket.
+        │   └── cloudformation <- Cloudformation stack scripts to create the resources.
+        │   └── ecs            <- ECS cluster.
+        │   └── iam            <- IAM roles.
+        │   └── sagemaker      <- SageMaker notebooks and models.
+        │   └── vpc            <- VPC.
         │
-        ├── notebooks          <- Jupyter notebooks. Naming convention is a number (for ordering),
-        │                         the creator's initials, and a short `-` delimited description, e.g.
-        │                         `julian-alvarez-v`.
+        ├── unet-paramo-insight <- The source code of the application.
+        │   ├── data           <- Data for the application.
+        │   └── config
+        |       └── constants.py <- Constants of the application.
+        │   └── models         <- Models for the application.
+        │   └── notebooks      <- Jupyter notebooks for the application.
+        │   └── packages       <- Packages for the application.
+        │   └── scripts        <- Scripts for the application.
+        │   
+        ├── app.py             <- The main application.
+        │
+        ├── cdk.json           <- The entry point for the CDK application.
+        │
+        ├── destroy.py         <- The script to destroy the stack.
+        │
+        ├── main.py            <- The script to create the stack.
         │
         ├── .gitignore         <- Files to ignore by `git`.
         │
@@ -135,3 +167,12 @@ please confirm the changes (y/n): y
 then you will see the outputs of the stack, the resources created and the data loaded in the S3 bucket.
 
 ![image](https://github.com/julian36alvarez/aws-cdk-paramo-surveillance-colombia/assets/31891276/b9fccdd0-9aed-42dd-9ecd-0321af364c76)
+
+
+## Destroy the stack
+
+Execute the destroy command to delete the stack: This command will delete the stack in the AWS account that you have configured in the AWS CLI, please execute this command in the root of the project.
+
+```bash
+python3 destroy.py
+```
