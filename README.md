@@ -168,6 +168,23 @@ then you will see the outputs of the stack, the resources created and the data l
 
 ![image](https://github.com/julian36alvarez/aws-cdk-paramo-surveillance-colombia/assets/31891276/b9fccdd0-9aed-42dd-9ecd-0321af364c76)
 
+## Data
+
+The data used in this application is located in the `unet-paramo-insight/` folder. This data is uploaded to the S3 bucket created by the AWS CDK stack.
+
+### Downloading the Data
+
+Please follow these steps to download and prepare the data:
+
+1. Download the data from the following link: [Zenodo](https://zenodo.org/record/13124217).
+2. Unzip the downloaded file.
+3. Copy the unzipped data and model folder to the `unet-paramo-insight/`.
+
+### Uploading Data to S3
+
+Once the data is in the `unet-paramo-insight/data` folder, it will be automatically uploaded to the S3 bucket when you deploy the stack using the AWS CDK.
+
+Make sure to follow these steps to ensure the data is correctly uploaded and accessible for the application.
 
 ## Destroy the stack
 
